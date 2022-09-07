@@ -1,0 +1,146 @@
+.room__container {
+ display: flex;
+ flex-direction: column;
+ height: 100vh;
+ background-color: var(--room_background_color);
+ color: #fff;
+}
+
+.video__container{
+    background-color: black;
+}
+
+.video__wrapper {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background-color: #333;
+    /* z-index: 10000; */
+}
+
+.video__wrapper > div {
+    aspect-ratio: 16/9;
+}
+
+.noVideo__flayer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat__container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat__header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem;
+    font-size: 14px;
+}
+
+.chat__header span {
+    margin-left: .6rem;
+}
+
+.chat__header > button {
+    display: inline;
+    width: auto;
+    padding: .9rem 1rem;
+}
+
+.messages__container {
+    flex-grow: 1 ;
+    height: 30px; 
+    border: 1px solid rgba(146, 146, 146, .18);
+}  
+
+.messages__container > div {
+    overflow-y: scroll;
+    height: 100%;
+}
+
+
+.messages__container > div::-webkit-scrollbar {
+    width: 3px;
+}
+
+.messages__container > div::-webkit-scrollbar-thumb {
+    background: #959595;
+    border-radius: 4px;
+}
+
+
+.sendMessage__container {
+    padding: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.input__text {
+    width: 170px;
+    height: 38px;
+    padding: 0 0 0 .6rem;
+    background-color: rgba(119, 119, 119, .41);
+    color: #D1D1D1;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.input__sendMessage {
+    width: 102px;
+    height: 38px;
+    background-color: var(--primary__button__color);
+    color: #fff;
+    font-size: 14px;
+}
+
+.modal__container {
+    width: 50vw;
+    width: 30vh;
+}
+
+.modal__container > input[type="text"] {
+    width: 100%;
+    padding: .7rem .6rem;
+    margin-bottom: 2rem;
+    border-radius: 5px;
+}
+
+.modal__container > input[type="submit"] {
+    background-color: var(--primary__button__color);
+    color: #fff;
+}
+
+@media only  screen and (max-device-width: 900px)  and (orientation: landscape) {
+    .sendMessage__container {
+        display: none;
+    }
+    .chat__header {
+        flex-direction: column;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+    .room__container {
+        display: grid;
+        grid-template-columns: 1fr 35%;
+    }
+
+    .video__container{ 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    
+}

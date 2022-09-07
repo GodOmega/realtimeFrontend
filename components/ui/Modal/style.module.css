@@ -1,0 +1,17 @@
+.modal__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, .7);
+}
+
+.modal__container > span {
+    position: fixed;
+    top: 5%;
+    right: 5%;
+    color: #fff;
+    font-size: 3rem;
+    cursor: pointer;
+}

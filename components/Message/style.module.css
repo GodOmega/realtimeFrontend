@@ -1,0 +1,15 @@
+.new__message {
+    padding: 0 1rem;
+}
+
+.new__message > span {
+    font-weight: bold;
+}
+
+
+.new__user {
+    padding: 1.2rem 0;
+    text-align: center;
+    background-color: #232323;
+    font-weight: bold;
+}

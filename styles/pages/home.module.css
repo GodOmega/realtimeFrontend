@@ -1,0 +1,68 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url("/images/homeBackground.png");
+    background-position: center center;
+    height: 100vh;
+}
+
+.home__actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 30vh;
+    max-width: 639px;
+    background-color: rgba(80, 74, 74, .47);
+    border-radius: 39px;
+}
+
+.actions__container {
+    width: 60%;
+}
+
+
+.actions__container >  input[type="text"] {
+    max-width: 100%;
+    margin-bottom: 1rem;
+    padding: .6rem;
+    font-weight: bold;
+}
+
+.actions__container >  input[type="submit"], .button__option {
+    background-color: var(--action_button_color);
+    color: var(--action_button_font_color)
+}
+
+.actions__container > input[type="submit"]:disabled {
+    background-color: var(--action_button_disabled);
+    cursor: not-allowed;
+}
+
+.actions__container > button:first-child {
+    margin-bottom: 1.3rem;
+}
+
+@media  (min-width: 768px) {
+    .home__actions {
+        font-size: 1rem;
+    }
+    .actions__container >  input[type="text"] {
+        margin-bottom: 2rem;
+    }
+}
+
+@media  (min-width: 768px) {
+    .home__actions {
+        height: 35vh
+    }
+}
+
+@media  (min-width: 1000px) {
+    .home__actions {
+        height: 60vh
+    }
+}
