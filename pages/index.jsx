@@ -107,7 +107,7 @@ const index = () => {
           </div>
         )}
 
-      {room && <Room roomId={room} socket={socket} />}
+      {room && <Room roomId={room} nickname={username} socket={socket} />}
     </main>
   );
 };

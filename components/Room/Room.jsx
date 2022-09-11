@@ -5,7 +5,7 @@ import styles from "./style.module.css";
 import Message from "../Message";
 import Modal from "../ui/Modal";
 
-const Room = ({ roomId, socket }) => {
+const Room = ({ roomId, socket, nickname }) => {
   const [messages, setMessages] = useState([]);
   const [videoUrl, setVideoUrl] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -43,6 +43,7 @@ const Room = ({ roomId, socket }) => {
     if (messageInput.current.value) {
       const messageBody = {
         message: messageInput.current.value,
+        username: nickname,
         room: roomId,
       };
       socket.emit("send-message", messageBody);
@@ -70,6 +71,7 @@ const Room = ({ roomId, socket }) => {
 
   const onPlay = () => {
     socket.volatile.emit("play-video", roomId);
+    console.log('playing')
   };
 
   const onPause = () => {
@@ -78,8 +80,16 @@ const Room = ({ roomId, socket }) => {
 
   const onReady = (event) => {
     const player = event.getInternalPlayer();
-    player.playVideo();
-    player.pauseVideo();
+    
+    if(player.playVideo) {
+      player.playVideo();
+      player.pauseVideo();
+    }
+
+    if(player.play) {
+      player.play()
+    }
+    console.log(player)
   };
 
   const handleControlsPlay = () => {
@@ -88,7 +98,13 @@ const Room = ({ roomId, socket }) => {
       const playerStatus = videoRef.current.player;
 
       if (!playerStatus.isPlaying) {
-        player.playVideo();
+        if(player.playVideo) {
+          player.playVideo();
+        }
+    
+        if(player.play) {
+          player.play()
+        }
       }
     }
   };
@@ -99,7 +115,13 @@ const Room = ({ roomId, socket }) => {
       const playerStatus = videoRef.current.player;
 
       if (playerStatus.isPlaying) {
-        player.pauseVideo();
+        if(player.pauseVideo) {
+          player.pauseVideo();
+        }
+
+        if(player.pause) {
+          player.pause()
+        }
       }
     }
   };

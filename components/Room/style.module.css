@@ -106,7 +106,8 @@
 
 .modal__container {
     width: 50vw;
-    width: 30vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .modal__container > input[type="text"] {
@@ -119,6 +120,8 @@
 .modal__container > input[type="submit"] {
     background-color: var(--primary__button__color);
     color: #fff;
+    width: 50%;
+    align-self: center;
 }
 
 @media only  screen and (max-device-width: 900px)  and (orientation: landscape) {
@@ -133,7 +136,7 @@
 @media only screen and (orientation: landscape) {
     .room__container {
         display: grid;
-        grid-template-columns: 1fr 35%;
+        grid-template-columns: 1fr 30%;
     }
 
     .video__container{ 
