@@ -110,6 +110,7 @@ const Room = ({ roomId, socket, nickname }) => {
   const onBuffer = () => {
     if (videoRef.current) {
       const player = videoRef.current.getInternalPlayer();
+      const currentTime = Math.floor(player.getCurrentTime());
       if (player.playVideo) {
         player.pauseVideo();
       }
@@ -118,7 +119,9 @@ const Room = ({ roomId, socket, nickname }) => {
         player.pause();
       }
       setTimeout(() => {
-        verifySync();
+        if(currentTime > 0) {
+          verifySync();
+        }
       }, 500);
     }
   };
@@ -126,13 +129,13 @@ const Room = ({ roomId, socket, nickname }) => {
   const onReady = (event) => {
     const player = event.getInternalPlayer();
 
-    // if (player.playVideo) {
-    //   player.playVideo();
-    // }
+    if (player.playVideo) {
+      player.playVideo();
+    }
 
-    // if (player.play) {
-    //   player.play();
-    // }
+    if (player.play) {
+      player.play();
+    }
   };
 
   const handleControlsPlay = () => {
