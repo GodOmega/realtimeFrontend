@@ -9,6 +9,7 @@ const Room = ({ roomId, socket, nickname }) => {
   const [messages, setMessages] = useState([]);
   const [videoUrl, setVideoUrl] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [sicronizando, setSincronizando] = useState(false);
 
   const messageInput = useRef(null);
 
@@ -51,45 +52,88 @@ const Room = ({ roomId, socket, nickname }) => {
     }
   };
 
+  const handleActiveSync = (time) => {
+    if (videoRef.current) {
+      setSincronizando(true);
+      const player = videoRef.current.getInternalPlayer();
+      player.seekTo(time, "seconds");
+      setTimeout(() => {
+        socket.volatile.emit("desactive-sync", roomId);
+      }, 3000);
+    }
+  };
+
+  const handleDesactivateSync = () => {
+    setSincronizando(false);
+  };
+
   const changeSrc = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (linkRef.current.value) {
       const videoId = linkRef.current.value;
       linkRef.current.value = "";
       socket.emit("load-url", { url: videoId, room: roomId });
-      setShowModal(false)
+      setShowModal(false);
     }
   };
 
   const onCloseModal = () => {
-    setShowModal(false)
-  }
+    setShowModal(false);
+  };
 
   const getUrl = (url) => {
     setVideoUrl(url);
   };
 
+  const verifySync = () => {
+    const player = videoRef.current;
+    const currentTime = player.getCurrentTime();
+    setSincronizando(true);
+    socket.volatile.emit("sync", {
+      room: roomId,
+      currentTime,
+    });
+  };
+
   const onPlay = () => {
-    socket.volatile.emit("play-video", roomId);
-    console.log('playing')
+    if (!sicronizando) {
+      socket.volatile.emit("play-video", roomId);
+    }
   };
 
   const onPause = () => {
-    socket.volatile.emit("pause-video", roomId);
+    if (!sicronizando) {
+      socket.volatile.emit("pause-video", roomId);
+    }
+  };
+
+  const onBuffer = () => {
+    if (videoRef.current) {
+      setTimeout(() => {
+        const player = videoRef.current.getInternalPlayer();
+        if (player.playVideo) {
+          player.pauseVideo();
+        }
+
+        if (player.play) {
+          player.pause();
+        }
+        verifySync();
+      }, 500);
+    }
   };
 
   const onReady = (event) => {
     const player = event.getInternalPlayer();
-    
-    if(player.playVideo) {
+
+    if (player.playVideo) {
       player.playVideo();
       player.pauseVideo();
     }
 
-    if(player.play) {
-      player.play()
+    if (player.play) {
+      player.play();
     }
-    console.log(player)
   };
 
   const handleControlsPlay = () => {
@@ -97,13 +141,14 @@ const Room = ({ roomId, socket, nickname }) => {
       const player = videoRef.current.getInternalPlayer();
       const playerStatus = videoRef.current.player;
 
-      if (!playerStatus.isPlaying) {
-        if(player.playVideo) {
+      if (!playerStatus.isPlaying && !sicronizando) {
+        console.log("pausando");
+        if (player.playVideo) {
           player.playVideo();
         }
-    
-        if(player.play) {
-          player.play()
+
+        if (player.play) {
+          player.play();
         }
       }
     }
@@ -114,13 +159,13 @@ const Room = ({ roomId, socket, nickname }) => {
       const player = videoRef.current.getInternalPlayer();
       const playerStatus = videoRef.current.player;
 
-      if (playerStatus.isPlaying) {
-        if(player.pauseVideo) {
+      if (playerStatus.isPlaying && !sicronizando) {
+        if (player.pauseVideo) {
           player.pauseVideo();
         }
 
-        if(player.pause) {
-          player.pause()
+        if (player.pause) {
+          player.pause();
         }
       }
     }
@@ -132,6 +177,8 @@ const Room = ({ roomId, socket, nickname }) => {
     socket.on("get-url", getUrl);
     socket.on("play-video", handleControlsPlay);
     socket.on("pause-video", handleControlsPause);
+    socket.on("active-sync", handleActiveSync);
+    socket.on("desactive-sync", handleDesactivateSync);
     socket.emit("join-room", roomId);
 
     return () => {
@@ -152,6 +199,8 @@ const Room = ({ roomId, socket, nickname }) => {
                 onReady={onReady}
                 onPlay={onPlay}
                 onPause={onPause}
+                onBuffer={onBuffer}
+                progressInterval={1000}
                 url={videoUrl}
                 controls={true}
               />
@@ -162,13 +211,23 @@ const Room = ({ roomId, socket, nickname }) => {
               </div>
             )}
           </div>
+          {sicronizando && videoUrl && (
+            <div
+              className={`${styles.noVideo__flayer} ${styles.noVideo__flayer_sync}`}
+            >
+              <h3>Sincronizando...</h3>
+            </div>
+          )}
         </div>
         <div className={styles.chat__container}>
           <div className={styles.chat__header}>
             <h3>
               Chat ID: <span>{roomId}</span>
             </h3>
-            <button onClick={() => setShowModal(true)} className={`${styles.loadVideo__button} button primary`}>
+            <button
+              onClick={() => setShowModal(true)}
+              className={`${styles.loadVideo__button} button primary`}
+            >
               {videoUrl ? "Cambiar video" : "Agregar video"}
             </button>
           </div>
@@ -209,9 +268,12 @@ const Room = ({ roomId, socket, nickname }) => {
 
       {showModal && (
         <Modal closeModal={onCloseModal}>
-          <form onSubmit={changeSrc} className={`${styles.modal__container} input-control`}>
-            <input ref={linkRef} type="text"  placeholder="URL" required/>
-            <input className="button" type="submit" value="cargar video"/>
+          <form
+            onSubmit={changeSrc}
+            className={`${styles.modal__container} input-control`}
+          >
+            <input ref={linkRef} type="text" placeholder="URL" required />
+            <input className="button" type="submit" value="cargar video" />
           </form>
         </Modal>
       )}

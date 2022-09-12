@@ -7,6 +7,7 @@
 }
 
 .video__container{
+    position: relative;
     background-color: black;
 }
 
@@ -30,6 +31,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 100;
+}
+
+.noVideo__flayer_sync {
+    background-color: #3339;
 }
 
 .chat__container {
