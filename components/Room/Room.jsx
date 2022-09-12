@@ -109,7 +109,6 @@ const Room = ({ roomId, socket, nickname }) => {
 
   const onBuffer = () => {
     if (videoRef.current) {
-      setSincronizando(true);
       const player = videoRef.current.getInternalPlayer();
       if (player.playVideo) {
         player.pauseVideo();
