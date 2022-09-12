@@ -128,7 +128,6 @@ const Room = ({ roomId, socket, nickname }) => {
 
     if (player.playVideo) {
       player.playVideo();
-      player.pauseVideo();
     }
 
     if (player.play) {
