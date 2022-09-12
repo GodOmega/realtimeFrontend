@@ -126,13 +126,13 @@ const Room = ({ roomId, socket, nickname }) => {
   const onReady = (event) => {
     const player = event.getInternalPlayer();
 
-    if (player.playVideo) {
-      player.playVideo();
-    }
+    // if (player.playVideo) {
+    //   player.playVideo();
+    // }
 
-    if (player.play) {
-      player.play();
-    }
+    // if (player.play) {
+    //   player.play();
+    // }
   };
 
   const handleControlsPlay = () => {
@@ -202,6 +202,7 @@ const Room = ({ roomId, socket, nickname }) => {
                 progressInterval={1000}
                 url={videoUrl}
                 controls={true}
+                playsinline={true}
               />
             )}
             {!videoUrl && (
