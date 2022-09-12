@@ -109,15 +109,16 @@ const Room = ({ roomId, socket, nickname }) => {
 
   const onBuffer = () => {
     if (videoRef.current) {
-      setTimeout(() => {
-        const player = videoRef.current.getInternalPlayer();
-        if (player.playVideo) {
-          player.pauseVideo();
-        }
+      setSincronizando(true);
+      const player = videoRef.current.getInternalPlayer();
+      if (player.playVideo) {
+        player.pauseVideo();
+      }
 
-        if (player.play) {
-          player.pause();
-        }
+      if (player.play) {
+        player.pause();
+      }
+      setTimeout(() => {
         verifySync();
       }, 500);
     }
