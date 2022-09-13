@@ -130,7 +130,7 @@ const Room = ({ roomId, socket, nickname }) => {
     const player = event.getInternalPlayer();
 
     if (player.playVideo) {
-      player.seekTo(1, 'seconds')
+      player.seekTo(0.02, 'seconds')
       player.playVideo();
     }
 
