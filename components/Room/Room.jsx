@@ -119,7 +119,7 @@ const Room = ({ roomId, socket, nickname }) => {
         player.pause();
       }
       setTimeout(() => {
-        if(currentTime > 0) {
+        if(currentTime) {
           verifySync();
         }
       }, 500);
