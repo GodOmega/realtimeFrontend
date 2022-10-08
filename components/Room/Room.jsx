@@ -5,19 +5,33 @@ import styles from "./style.module.css";
 import Message from "../Message";
 import Modal from "../ui/Modal";
 
+import useVideoControls from "../../hooks/useVideoControls";
+
 const Room = ({ roomId, socket, nickname }) => {
   const [messages, setMessages] = useState([]);
-  const [videoUrl, setVideoUrl] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [sicronizando, setSincronizando] = useState(false);
-
-  const messageInput = useRef(null);
 
   const linkRef = useRef(null);
-  const videoRef = useRef(null);
 
+  const messageInput = useRef(null);
   const messageContainer = useRef(null);
   const messagesBody = useRef(null);
+
+  const {
+    videoUrl,
+    sicronizando,
+    videoRef,
+    getUrl,
+    handleActiveSync,
+    handleDesactivateSync,
+    changeSrc,
+    onPlay,
+    onBuffer,
+    onPause,
+    onReady,
+    handleControlsPause,
+    handleControlsPlay,
+  } = useVideoControls(socket, roomId);
 
   const scrollToBottom = () => {
     if (messagesBody.current && messageContainer.current) {
@@ -52,125 +66,17 @@ const Room = ({ roomId, socket, nickname }) => {
     }
   };
 
-  const handleActiveSync = (time) => {
-    if (videoRef.current) {
-      setSincronizando(true);
-      const player = videoRef.current.getInternalPlayer();
-      player.seekTo(time, "seconds");
-      setTimeout(() => {
-        socket.volatile.emit("desactive-sync", roomId);
-      }, 3000);
-    }
-  };
-
-  const handleDesactivateSync = () => {
-    setSincronizando(false);
-  };
-
-  const changeSrc = (e) => {
-    e.preventDefault();
-    if (linkRef.current.value) {
-      const videoId = linkRef.current.value;
-      linkRef.current.value = "";
-      socket.emit("load-url", { url: videoId, room: roomId });
-      setShowModal(false);
-    }
-  };
-
   const onCloseModal = () => {
     setShowModal(false);
   };
 
-  const getUrl = (url) => {
-    setVideoUrl(url);
-  };
-
-  const verifySync = () => {
-    const player = videoRef.current;
-    const currentTime = player.getCurrentTime();
-    setSincronizando(true);
-    socket.volatile.emit("sync", {
-      room: roomId,
-      currentTime,
-    });
-  };
-
-  const onPlay = () => {
-    if (!sicronizando) {
-      socket.volatile.emit("play-video", roomId);
-    }
-  };
-
-  const onPause = () => {
-    if (!sicronizando) {
-      socket.volatile.emit("pause-video", roomId);
-    }
-  };
-
-  const onBuffer = () => {
-    if (videoRef.current) {
-      const player = videoRef.current.getInternalPlayer();
-      const currentTime = Math.floor(player.getCurrentTime());
-      if (player.playVideo) {
-        player.pauseVideo();
-      }
-
-      if (player.play) {
-        player.pause();
-      }
-      setTimeout(() => {
-        if(currentTime) {
-          verifySync();
-        }
-      }, 500);
-    }
-  };
-
-  const onReady = (event) => {
-    const player = event.getInternalPlayer();
-
-    if (player.playVideo) {
-      player.seekTo(0.02, 'seconds')
-      player.playVideo();
-    }
-
-    if (player.play) {
-      player.play();
-    }
-  };
-
-  const handleControlsPlay = () => {
-    if (videoRef.current) {
-      const player = videoRef.current.getInternalPlayer();
-      const playerStatus = videoRef.current.player;
-
-      if (!playerStatus.isPlaying && !sicronizando) {
-        console.log("pausando");
-        if (player.playVideo) {
-          player.playVideo();
-        }
-
-        if (player.play) {
-          player.play();
-        }
-      }
-    }
-  };
-
-  const handleControlsPause = () => {
-    if (videoRef.current) {
-      const player = videoRef.current.getInternalPlayer();
-      const playerStatus = videoRef.current.player;
-
-      if (playerStatus.isPlaying && !sicronizando) {
-        if (player.pauseVideo) {
-          player.pauseVideo();
-        }
-
-        if (player.pause) {
-          player.pause();
-        }
-      }
+  const loadSrc = async (e) => {
+    e.preventDefault();
+    if (linkRef.current.value) {
+      const videoId = linkRef.current.value;
+      changeSrc(videoId);
+      linkRef.current.value = "";
+      setShowModal(false);
     }
   };
 
@@ -273,7 +179,7 @@ const Room = ({ roomId, socket, nickname }) => {
       {showModal && (
         <Modal closeModal={onCloseModal}>
           <form
-            onSubmit={changeSrc}
+            onSubmit={loadSrc}
             className={`${styles.modal__container} input-control`}
           >
             <input ref={linkRef} type="text" placeholder="URL" required />
